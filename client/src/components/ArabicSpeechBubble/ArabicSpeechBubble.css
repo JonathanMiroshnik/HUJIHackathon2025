@@ -1,0 +1,94 @@
+.arabic-speech-bubble {
+    direction: rtl;
+    /* background-color: #f8f9fa; */
+    border-radius: 18px;
+    padding: 15px 20px;
+    margin: 15px 0;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    /* max-width: 80%; */
+}
+
+.arabic-speech-bubble:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.arabic-speech-content {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    line-height: 1.6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-bottom: 10px;
+}
+
+.arabic-word {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.arabic-word:hover {
+    /* background-color: #e9f7fe; */
+    color: #1a73e8;
+}
+
+.arabic-speech-bubble:hover > .arabic-speech-button-section {
+    opacity: 1;
+
+    display: block;
+    /* visibility: visible; */
+    
+    transform: translateY(0);
+}
+
+.arabic-speech-button-section {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #e9ecef;
+    opacity: 0;
+
+    display: none;
+    /* visibility: hidden; */
+
+    transform: translateY(5px);
+    transition: all 0.3s ease;
+}
+
+.arabic-speech-button {
+    background-color: #4ca1af;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.arabic-speech-button:hover {
+    background-color: #3a7a8c;
+    transform: translateY(-1px);
+}
+
+.arabic-speech-question-input {
+    flex-grow: 1;
+    padding: 8px 12px;
+    /* border: 1px solid #ddd; */
+    border-radius: 20px;
+    font-size: 0.9rem;
+    direction: rtl;
+}
+
+.arabic-speech-question-input:focus {
+    outline: none;
+    border-color: #4ca1af;
+    box-shadow: 0 0 0 2px rgba(76, 161, 175, 0.2);
+}

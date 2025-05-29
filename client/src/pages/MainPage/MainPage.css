@@ -1,0 +1,51 @@
+.main-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.main-page > *:not(footer) {
+  flex: 1;
+}
+
+.main-page footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* background: white; */
+  padding: 15px 0;
+  border-top: 1px solid #eee;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+.footer-content {
+  width: 100%;
+  max-width: 800px; /* Or your preferred max width */
+  margin: 0 auto;
+  padding: 0 15px;
+  display: flex;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.main-user-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  box-sizing: border-box;
+  direction: rtl;
+}
+
+.main-user-input-button {
+  background: #4ca1af;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}

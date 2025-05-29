@@ -1,4 +1,4 @@
-from gemini import Gemini, init_model
+from server.services.gemini import Gemini, init_model
 
 
 def basic_example():

@@ -1,0 +1,11 @@
+.speech-bubble {
+    /* display: flex; */
+    display:block;
+    justify-content: center;
+
+    /* border: 1px white solid; */
+    direction: rtl;
+
+    padding: 5px;
+    margin: 5px;
+}

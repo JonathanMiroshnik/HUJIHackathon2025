@@ -1,3 +1,7 @@
+import os
+from pathlib import Path
+
+
 import google.generativeai as genai
 import google.auth
 
@@ -8,7 +12,10 @@ class Gemini:
     Just call init_model() with your preferred model and use ask()
     """
 
-    _SERVICE_ACCOUNT_FILE_PATH = "./hackathon-team-22_gen-lang-client-0325865525_iam_gserviceaccount_com_1747758084.json"
+    # _SERVICE_ACCOUNT_FILE_PATH = "services/LLM/hackathon-team-22_gen-lang-client-0325865525_iam_gserviceaccount_com_1747758084.json"
+
+    _SERVICE_ACCOUNT_FILE_PATH = str(Path(__file__).parent / "hackathon-team-22_gen-lang-client-0325865525_iam_gserviceaccount_com_1747758084.json")
+
 
     # Available models with descriptions
     AVAILABLE_MODELS = {

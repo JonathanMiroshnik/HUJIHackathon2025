@@ -1,0 +1,7 @@
+.hebrew-speech-bubble {
+    /* border: 1px red solid; */
+    direction: rtl;
+
+    padding: 5px;
+    margin: 5px;
+}
