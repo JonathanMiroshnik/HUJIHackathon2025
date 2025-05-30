@@ -2,11 +2,26 @@ import HebrewSpeechBubble from '../HebrewSpeechBubble/HebrewSpeechBubble';
 import ArabicSpeechBubble from '../ArabicSpeechBubble/ArabicSpeechBubble';
 import './SpeechBubble.css'
 
-function SpeechBubble() {
+export interface LanguageSpeech {
+    text: string;
+    language: string; // Appropriate strings: "Hebrew", "Arabic"
+}
+
+interface SpeechBubbleProps {
+    subSpeeches: LanguageSpeech[];
+    speechBubbleIndex: number;
+}
+
+function SpeechBubble({ subSpeeches, speechBubbleIndex }: SpeechBubbleProps) {
     return (
         <div className="speech-bubble">
-            <HebrewSpeechBubble>שלום קוראים לי איש</HebrewSpeechBubble>
-            <ArabicSpeechBubble text="أحد أبرز الأحداث في التاريخ " />
+            { subSpeeches.length > 0 && subSpeeches.map((ss, ind) => (
+                <div key={"speech-bubble_" + speechBubbleIndex + "_sub-speech_" + ind}>                    
+                    {ss.language === "Hebrew" ? 
+                    <HebrewSpeechBubble>{ss.text}</HebrewSpeechBubble> : 
+                    <ArabicSpeechBubble text={ss.text} speechIndex={ind} />}
+                </div>
+            )) }            
         </div>
     );
 }

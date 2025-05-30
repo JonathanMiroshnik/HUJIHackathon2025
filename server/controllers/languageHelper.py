@@ -17,7 +17,7 @@ Implements:
 2. explain_word: Word to abstract JSON (root, binyan, singular, plural)
 """
 class Dialog:
-	def __init__(self, model_name="gemini-1.5-flash"):
+	def __init__(self, model_name='gemini-1.5-flash'):
 		"""
 		Initialize the dialog with a specific model.
 		Default is "gemini-1.5-flash".
@@ -42,7 +42,7 @@ class Dialog:
 		return bidi_text
 
 
-	def explain_sentence(self, sentence_ar: str, question_ar: str,  model_name="gemini-1.5-flash") -> str:
+	def explain_sentence(self, sentence_ar: str, question_ar: str,  model_name='gemini-1.5-flash') -> str:
 		"""
 		Receives an Arabic sentence and a question in Arabic.
 		Returns a Hebrew sentence with an explanation about the question in Hebrew.
@@ -57,7 +57,7 @@ class Dialog:
 		self.conversation.append(answer)  # Add answer to dialog history if needed
 		return f"{answer}"
 	
-	def explain_conversation(self, sentence_ar: list[str], model_name="gemini-1.5-flash") -> str:
+	def explain_conversation(self, sentence_ar: list[str], model_name='gemini-1.5-flash') -> str:
 		"""
 		Receives an Arabic conversation.
 		Returns an explanation of the conversation in Hebrew.
@@ -73,7 +73,7 @@ class Dialog:
 
 		return answer.text
 
-	def continue_conversation(self, sentence_ar: list[str], model_name="gemini-1.5-flash") -> str:
+	def continue_conversation(self, sentence_ar: list[str], model_name='gemini-1.5-flash') -> str:
 		"""
 		Receives an Arabic conversation.
 		Returns an Arabic sentence that continues the conversation.
@@ -90,7 +90,7 @@ class Dialog:
 
 
 	# def explain_word(self, word: str, model_name="gemini-1.5-flash -> dict"):
-	def explain_word(self, word: str, model_name="gemini-1.5-flash"):
+	def explain_word(self, word: str, model_name='gemini-1.5-flash'):
 		"""
 		Receives a word.
 		Returns an abstract JSON explaining root, binyan, singular, and plural.

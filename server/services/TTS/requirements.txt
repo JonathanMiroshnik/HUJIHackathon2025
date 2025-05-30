@@ -1,0 +1,11 @@
+# Speech-to-Text dependencies
+numpy==1.26.4
+transformers==4.42.2
+static-ffmpeg==2.13
+sentencepiece
+accelerate
+
+# Text-to-Speech dependencies
+edge-tts>=6.1.0  # Online TTS (Microsoft)
+gTTS==2.5.1      # Offline TTS (Google)
+simpleaudio>=1.0.4

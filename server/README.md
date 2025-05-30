@@ -29,7 +29,7 @@ print(response)
 from gemini import init_model
 
 # Use a specific model directly
-gemini = init_model("gemini-1.5-flash")
+gemini = init_model('gemini-1.5-flash') #("gemini-1.5-flash")
 response = gemini.ask("Explain Python in simple terms")
 print(response)
 ```
@@ -39,7 +39,7 @@ print(response)
 ```python
 from gemini import init_model
 
-gemini = init_model("gemini-2.0-flash")
+gemini = init_model("gemini-1.5-flash")
 
 # Ask multiple questions in the same session
 response1 = gemini.ask("What is Python?")

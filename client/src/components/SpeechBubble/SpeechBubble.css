@@ -1,11 +1,21 @@
 .speech-bubble {
-    /* display: flex; */
-    display:block;
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* max-width: 100%; */
+    max-width: 50rem;
+    padding: 15px;
+    margin: 15px 0;
+    position: relative;
+    /* background: white; */
+    border-radius: 18px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
 
-    /* border: 1px white solid; */
-    direction: rtl;
-
-    padding: 5px;
-    margin: 5px;
+.speech-bubble:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }

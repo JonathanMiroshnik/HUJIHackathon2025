@@ -18,7 +18,7 @@ def specific_model_example():
     print("=== Example 2: Specific Model ===")
 
     # Use a specific model directly
-    gemini = init_model("gemini-2.0-flash")
+    gemini = init_model("gemini-1.5-flash")
 
     response = gemini.ask("Explain quantum computing in simple terms")
     print(f"Response: {response}")
@@ -29,7 +29,7 @@ def long_answer_example():
     """Example 3: Getting detailed answers"""
     print("=== Example 3: Detailed Answer ===")
 
-    gemini = init_model("gemini-1.5-pro")
+    gemini = init_model('gemini-1.5-flash')
 
     # Request a detailed answer
     response = gemini.ask("How does machine learning work?", short_answer=False)
@@ -41,7 +41,7 @@ def multiple_questions_example():
     """Example 4: Multiple questions in same session"""
     print("=== Example 4: Multiple Questions ===")
 
-    gemini = init_model("gemini-2.0-flash")
+    gemini = init_model("gemini-1.5-flash")
 
     questions = [
         "What is Python?",
@@ -59,7 +59,7 @@ def model_info_example():
     """Example 6: Getting model information"""
     print("=== Example 6: Model Information ===")
 
-    gemini = init_model("gemini-2.0-flash-lite")
+    gemini = init_model("gemini-1.5-flash")
 
     print(f"Current model: {gemini.get_model_name()}")
     print("Available models:")

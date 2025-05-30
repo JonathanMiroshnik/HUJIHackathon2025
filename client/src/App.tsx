@@ -7,14 +7,14 @@ import './App.css'
 
 function App() {
   return (
-    <div className="app">
-      <Navigation />
-      <main className="main-style">
-        <Routes>
+    <div className="app">  
+      <Navigation/>    
+      <main className="main-style">        
+        <Routes>          
           <Route path="/" element={<MainPage />} />
           <Route path="/memory" element={<MemoryPage />} />
-        </Routes>
-      </main>      
+        </Routes>        
+      </main>
     </div>
   )
 }

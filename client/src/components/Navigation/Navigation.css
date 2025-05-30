@@ -10,6 +10,21 @@
   box-sizing: border-box;
   box-shadow: 2px 0 10px rgba(0,0,0,0.1);
   z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clear-button {
+  margin: 100px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: transparent;
 }
 
 .nav-header {
@@ -22,12 +37,16 @@
 
 .nav-list {
   list-style: none;
+  align-items: center;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .nav-item {
-  margin-bottom: 15px;
+  margin-bottom: 0;
 }
 
 .nav-link {

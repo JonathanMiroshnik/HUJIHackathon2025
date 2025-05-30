@@ -7,10 +7,132 @@ interface ArabicSpeechBubbleProps {
     speechIndex?: number;
 }
 
+export interface WordExplanationProps {
+    stem?: string;
+    singular?: string;
+    plural?: string;
+    root?: string;
+    partOfSpeech?: string;
+}
+
 function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
     const [explanation, setExplanation] = useState("");
+
+    const [wordExplanation, setWordExplanation] = useState(false);
+    const [lineExplanation, setLineExplanation] = useState(false);
+
     const [conversation, setConversation] = useState<string[]>([]);
     const [humanResponse, setHumanResponse] = useState("");
+
+    function wordExplanationToString(wordExplanation: WordExplanationProps) {
+        const ROW_SIZE = 2; // Must be above 0
+
+        var retStr: string = "";
+        var curCount: number = 0;
+        
+        if (wordExplanation.partOfSpeech) {
+            retStr += " <b>חלק דיבר</b>: " + wordExplanation.partOfSpeech + "\t    ";
+            if (curCount % ROW_SIZE == 0) {
+                retStr += '\n';
+            }
+            curCount += 1;
+        }
+        if (wordExplanation.root) {
+            retStr += " <b>שורש</b>: " + wordExplanation.root + "\t    ";
+            if (curCount % ROW_SIZE == 0) {
+                retStr += '\n';
+            }
+            curCount += 1;
+        }
+        if (wordExplanation.plural) {
+            retStr += " <b>רבים</b>: " + wordExplanation.plural + "\t    ";
+            if (curCount % ROW_SIZE == 0) {
+                retStr += '\n';
+            }
+            curCount += 1;
+        }
+        if (wordExplanation.singular) {
+            retStr += " <b>יחיד</b>: " + wordExplanation.singular + "\t    ";
+            if (curCount % ROW_SIZE == 0) {
+                retStr += '\n';
+            }
+            curCount += 1;
+        }
+        if (wordExplanation.stem) {
+            retStr += " <b>בניין</b>: " + wordExplanation.stem + "\t    ";
+            if (curCount % ROW_SIZE == 0) {
+                retStr += '\n';
+            }
+            curCount += 1;
+        }
+
+        return retStr;
+    }
+
+    const sttSubmit = async (inText: string) => {
+        const formData = new FormData();
+        formData.append("text", inText);
+    
+        const response = await fetch("http://localhost:8000/stt", {
+          method: "POST",
+          body: formData,
+        });        
+    
+        if (!response.ok) {
+          alert("Failed to fetch audio");
+          return;
+        }
+
+        const reply = await response.json();
+        console.log("REPLY", reply.message);
+        const replyText: string[] = reply.message;
+        highlightText([...replyText.map((word) => word.normalize("NFKC"))]);
+    };
+
+    // highlights the first conversation line with stt
+    function highlightText(message: string[]) {
+        const cleaned = conversation[0].replace(/,/g, '')
+                                        .replace(/\./g, '')
+                                        .replace(/،/g, '');
+        const hlh = cleaned.split(' ');
+
+        console.log("HLH", hlh);
+
+        const highlightedHTML = hlh.map(word => {
+                                    console.log("WORD", word, message.includes(word));
+                                    return message.includes(word.normalize("NFKC"))
+                                        ? word
+                                        : `<b>${word}</b>`;
+                                })
+        .join(' ');
+
+        console.log("highlighted", highlightedHTML);
+        
+        setConversation(prev => [highlightedHTML, ...prev.slice(1)])
+    }
+
+    const handleSubmit = async (inText: string) => {
+        const formData = new FormData();
+        formData.append("text", inText);
+
+        console.log("TEXT",inText);
+    
+        const response = await fetch("http://localhost:8000/tts", {
+          method: "POST",
+          body: formData,
+        });
+    
+        if (!response.ok) {
+          alert("Failed to fetch audio");
+          return;
+        }
+    
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+    
+        const audio = new Audio(audioUrl);
+        audio.play();
+    };    
 
     async function explanationClick(conversation: string[]) {
         try {
@@ -21,6 +143,10 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
             });
 
             const result = await response.json();
+
+            setWordExplanation(false);
+            setLineExplanation(true);
+
             setExplanation(result.message);
             console.log(conversation);
         } catch (err) {
@@ -57,7 +183,53 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
             });
 
             const result = await response.json();
-            setExplanation(JSON.stringify(result, null, 2)); // TODO: break up word parameters
+
+            const resultRemade: WordExplanationProps = {
+                stem: result.binyan,
+                singular: result.singular, 
+                plural: result.plural,
+                root: result.root,
+                // partOfSpeech: string;
+            };
+
+            handleSubmit(word);
+
+            setWordExplanation(true);
+            setLineExplanation(false);
+
+            setExplanation(wordExplanationToString(resultRemade));
+            // setExplanation(JSON.stringify(result, null, 2)); // TODO: break up word parameters
+            console.log(conversation);
+        } catch (err) {
+            console.error("Error:", err);
+        }
+    }
+
+    async function handleWord(word: string) {
+        try {
+            const response = await fetch(`http://localhost:8000/explain-word`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ input: word }),
+            });
+
+            const result = await response.json();
+
+            const resultRemade: WordExplanationProps = {
+                stem: result.binyan,
+                singular: result.singular, 
+                plural: result.plural,
+                root: result.root,
+                // partOfSpeech: string;
+            };
+
+            handleSubmit(word);
+
+            setWordExplanation(true);
+            setLineExplanation(false);
+
+            setExplanation(wordExplanationToString(resultRemade));
+            // setExplanation(JSON.stringify(result, null, 2)); // TODO: break up word parameters
             console.log(conversation);
         } catch (err) {
             console.error("Error:", err);
@@ -76,19 +248,21 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
                         <span
                             key={"arabic_bubble_" + speechIndex + "_subBubble_" + ind + "_word_" + index}
                             // className={`word ${activeWord === word ? 'active' : ''}`} // TODO: active word indicator
-                            onClick={() => handleSpeechClick(word, "explain-word")}
+                            onClick={() => handleWord(word)}
                         >
-                            {word + ' '}
+                            <a style={{color: "white"}} dangerouslySetInnerHTML={{ __html: word + ' '}} />
                         </span> 
                     ))  }
                 </div>
              ) }
-             { explanation && <ArabicSpeechExplanation> {explanation} </ArabicSpeechExplanation>}
-            <div className="arabic-speech-button-section">
+             { explanation && <ArabicSpeechExplanation> <div dangerouslySetInnerHTML={{ __html: explanation }}/> </ArabicSpeechExplanation>}
+            <div className="arabic-speech-button-section">   
+                <button onClick={() => sttSubmit(conversation[0])} className="arabic-speech-button">🗣️</button>
+                <button onClick={() => handleSubmit(conversation.join('\n'))} className="arabic-speech-button">📢</button>
                 <button onClick={() => explanationClick(conversation)} className="arabic-speech-button">הסבר</button>
                 <button onClick={() => continueConversationClick(conversation)} className="arabic-speech-button">המשך</button>                
                 <input onChange={handleChange} className="arabic-speech-question-input" placeholder={`שאל על ${conversation.length > 1 ? "השיחה": "המשפט"}`} />
-                <button onClick={() => handleSpeechClick(humanResponse, "arabic-speech-explanation")}> שלח </button>
+                <button onClick={() => explanationClick([...conversation, humanResponse])}> שלח </button>
             </div>
         </div>
     );
