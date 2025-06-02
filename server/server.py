@@ -8,23 +8,20 @@
 # For starting the backend server:
 # uvicorn server.server:app --reload
 
-import asyncio
-from typing import Optional
-from fastapi import HTTPException, FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-
-from fastapi import Form
-from fastapi.responses import StreamingResponse
-from gtts import gTTS
-from io import BytesIO
-from server.services.TTS.text_to_speak import TextToSpeechConverter
-
 import sys
 from pathlib import Path
+from io import BytesIO
+from typing import Optional
+from fastapi import HTTPException, FastAPI, Form
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
+from gtts import gTTS
 
+from server.services.TTS.text_to_speak import TextToSpeechConverter
 from server.Yoel.parser import extract_tagged_text
 from server.services.TTS.audio import conversation_with_user
+
 # Get absolute path to project root
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))

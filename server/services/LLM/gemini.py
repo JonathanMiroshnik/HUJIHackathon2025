@@ -49,17 +49,6 @@ class Gemini:
 
             print(f"🚀 Initializing model: {model_name}...")
 
-            # Configure Google AI API
-            if not _SERVICE_ACCOUNT_FILE_PATH:
-                raise ValueError("Service account file path is not set. Please set Gemini._SERVICE_ACCOUNT_FILE_PATH or ensure it has a default value.")
-
-            try:
-                credentials, _ = google.auth.load_credentials_from_file(_SERVICE_ACCOUNT_FILE_PATH)
-            except FileNotFoundError:
-                raise FileNotFoundError(f"Service account file not found at: {_SERVICE_ACCOUNT_FILE_PATH}. Please check the path.")
-            except Exception as e:
-                raise Exception(f"Failed to load credentials from {_SERVICE_ACCOUNT_FILE_PATH}: {e}")
-
             genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
             # Create model and chat session

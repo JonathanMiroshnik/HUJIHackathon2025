@@ -6,6 +6,11 @@ from server.services.LLM.gemini import init_model
 import arabic_reshaper
 from bidi.algorithm import get_display
 
+def convert_arabic(self, text):
+		reshaped = arabic_reshaper.reshape(text)       # Connect letters
+		bidi_text = get_display(reshaped)              # Apply RTL direction
+		return bidi_text
+
 def print_rtl(word: str):
 	print(convert_arabic(word))
 
@@ -33,14 +38,7 @@ class Dialog:
 		for question in self.conversation:
 			conversation_text += question + "\n"
 
-		return self.gemini.ask(prompt + conversation_text, short_answer=True)
-
-
-	def convert_arabic(self, text):
-		reshaped = arabic_reshaper.reshape(text)       # Connect letters
-		bidi_text = get_display(reshaped)              # Apply RTL direction
-		return bidi_text
-
+		return self.gemini.ask(prompt + conversation_text, short_answer=True)	
 
 	def explain_sentence(self, sentence_ar: str, question_ar: str,  model_name='gemini-1.5-flash') -> str:
 		"""
