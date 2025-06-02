@@ -7,7 +7,6 @@ import sys
 import os
 import google.generativeai as genai
 import google.auth
-from server.Yoel.parser import extract_tagged_text
 
 # Custom Gemini class with correct service account path
 class FixedGemini:

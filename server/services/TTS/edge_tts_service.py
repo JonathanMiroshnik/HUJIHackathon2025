@@ -97,23 +97,23 @@ def edge_tts_convert(text: str, voice: Optional[str] = DEFAULT_VOICE,
     return result
 
 
-# Example usage
-if __name__ == "__main__":
-    # Simple example of converting text to speech
-    sample_text = "Hello, this is a test of the Microsoft Edge text to speech service."
-    output_file = "edge_tts_example.mp3"
+# # Example usage
+# if __name__ == "__main__":
+#     # Simple example of converting text to speech
+#     sample_text = "Hello, this is a test of the Microsoft Edge text to speech service."
+#     output_file = "edge_tts_example.mp3"
 
-    print(f"Converting sample text to speech...")
-    result_path = edge_tts_convert(sample_text, output_path=output_file)
-    print(f"Audio saved to: {result_path}")
+#     print(f"Converting sample text to speech...")
+#     result_path = edge_tts_convert(sample_text, output_path=output_file)
+#     print(f"Audio saved to: {result_path}")
 
-    # Multilingual example (uncomment to test)
-    # voices_and_texts = {
-    #     VOICE_MALE_US: "This is an American male voice.",
-    #     VOICE_FEMALE_UK: "This is a British female voice.",
-    #     VOICE_HEBREW_FEMALE: "זוהי דוגמה לקול נשי בעברית.",
-    #     VOICE_SPANISH_MALE: "Esta es una voz masculina en español."
-    # }
-    # for voice, text in voices_and_texts.items():
-    #     output = f"{voice.split('-')[0]}_example.mp3"
-    #     edge_tts_convert(text=text, voice=voice, output_path=output)
+#     # Multilingual example (uncomment to test)
+#     # voices_and_texts = {
+#     #     VOICE_MALE_US: "This is an American male voice.",
+#     #     VOICE_FEMALE_UK: "This is a British female voice.",
+#     #     VOICE_HEBREW_FEMALE: "זוהי דוגמה לקול נשי בעברית.",
+#     #     VOICE_SPANISH_MALE: "Esta es una voz masculina en español."
+#     # }
+#     # for voice, text in voices_and_texts.items():
+#     #     output = f"{voice.split('-')[0]}_example.mp3"
+#     #     edge_tts_convert(text=text, voice=voice, output_path=output)

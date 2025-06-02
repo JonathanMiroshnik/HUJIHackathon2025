@@ -1,4 +1,8 @@
 google-generativeai
 google-auth
 gTTS
-playsound
+playsound3
+pyttsx3
+arabic_reshaper
+python-bidi
+edge_tts

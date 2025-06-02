@@ -1,6 +1,3 @@
-
-
-
 """
 function.py
 
@@ -12,6 +9,7 @@ Implements:
 from gemini import init_model
 import arabic_reshaper
 from bidi.algorithm import get_display
+
 class Dialog:
 
 	def __init__(self, model_name="gemini-1.5-flash"):
@@ -78,9 +76,7 @@ class Dialog:
 		return result
 
 
-
-
-dialog = Dialog()
-print(dialog.explain_word("جميلة", "gemini-1.5-flash"))
-print(dialog.explain_sentence("اللغة العربية جميلة", "מה זה אומר על השפה הערבית?", "gemini-1.5-flash"))
-print(dialog.answer_to_conversation())
+# dialog = Dialog()
+# print(dialog.explain_word("جميلة", "gemini-1.5-flash"))
+# print(dialog.explain_sentence("اللغة العربية جميلة", "מה זה אומר על השפה הערבית?", "gemini-1.5-flash"))
+# print(dialog.answer_to_conversation())
