@@ -1,7 +1,24 @@
+# For the virtual environment:
+# source ../.venv/bin/activate
+
+# For the FastAPI library:
+# pip install "fastapi[all]"
+# Also make sure to install the requirements: pip install -r requirements.txt
+
+# For starting the backend server:
+# uvicorn server.server:app --reload
+
 import asyncio
-from fastapi import FastAPI
+from typing import Optional
+from fastapi import HTTPException, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
+from fastapi import Form
+from fastapi.responses import StreamingResponse
+from gtts import gTTS
+from io import BytesIO
+from server.services.TTS.text_to_speak import TextToSpeechConverter
 
 import sys
 from pathlib import Path
@@ -15,7 +32,12 @@ sys.path.insert(0, str(project_root))
 from server.Yoel.model import BilingualContentGenerator
 from server.controllers.languageHelper import Dialog
 
+# import sys
+# from pathlib import Path
+# sys.path.append(str(Path(__file__).parent))
+# from server.services.LLM.gemini import *
 
+# FastAPI start-up
 app = FastAPI()
 
 # Allow requests from your frontend (adjust the URL as needed)
@@ -32,79 +54,87 @@ app.add_middleware(
     allow_headers=["*"],     # Allow all headers (including Authorization)
 )
 
-
-
-# Define a Pydantic model for expected JSON input
+# Pydantic model for expected JSON input
 class RequestData(BaseModel):
-    input: str  # or any other fields
+    input: str
 
+class StringRequest(BaseModel):
+    input: list[str]
 
+class ErrorResponse(BaseModel):
+    error: str
+    details: str | None = None
 
-# Activation importance:
-# source ../.venv/bin/activate
-# pip install "fastapi[all]"
+class WordExplanation(BaseModel):
+    word: str
+    explanation: str
+    language: str = "en"
 
-# main is name of file, this file is server.py, so it is "server":
-# uvicorn server.server:app --reload
+class ResponseWrapper(BaseModel):
+    success: bool
+    data = None
+    error: Optional[ErrorResponse] = None
 
+# # Use explain_sentence
+# hebrew_explanation = dialog.explain_sentence(arabic_sentence, arabic_question)
+
+ttsConv = TextToSpeechConverter()
 
 # Create dialog instance
 dialog = Dialog()
 teacher = BilingualContentGenerator()
 teacher.initialize()
 
-@app.post("/api")
-async def read_root(data: RequestData):
+
+@app.post("/api", response_model=ResponseWrapper)
+async def api(data: RequestData):
     print("Received data:", data.input)
     
     connected_history: str = '\n'.join(teacher.history)
     output = teacher.generate_bilingual_content(connected_history + "\n\n Current input:\n" + data.input)
     return {"message": extract_tagged_text(output)}
 
-@app.post("/explain-word")
-async def read_root(data: RequestData):
+
+@app.post("/explain-word", response_model=ResponseWrapper)
+async def explain_word(data: RequestData):
     print("Received data:", data.input)
-    # TODO: check if it is single word?
-    final_description = dialog.explain_word(data.input);
-    print("final",final_description)
-    return final_description
+
+    if len(data.input.split()) != 1:
+        return {
+            "success": False,
+            "error": {
+                "message": "Invalid input",
+                "details": "Please provide exactly one word"
+            }
+        }
+    
+    explanation = dialog.explain_word(data.input)
+    return {
+        "success": True,
+        "data": {
+            "word": data.input,
+            "meaning": explanation
+        }
+    }
 
 
-class StringRequest(BaseModel):
-    input: list[str]  # Must match exactly what you send from frontend
-
-@app.post("/arabic-speech-continue-conversation")
-async def read_root(data: StringRequest):
+@app.post("/arabic-speech-continue-conversation", response_model=ResponseWrapper)
+async def arabic_speech_continue_conversation(data: StringRequest):
     print("Received data:", data.input)
-    # TODO: check if it is single word?
+
     final_description = dialog.continue_conversation(data.input);
-    print(final_description)
     return {"message": final_description}
 
 
-@app.post("/arabic-speech-explanation")
-async def read_root(data: StringRequest):
+@app.post("/arabic-speech-explanation", response_model=ResponseWrapper)
+async def arabic_speech_explanation(data: StringRequest):
     print("Received data:", data.input)
-    # TODO: check if it is single word?
+    
     final_description = dialog.explain_conversation(data.input);
-    print(final_description)
     return {"message": final_description}
 
-# # Use explain_sentence
-# hebrew_explanation = dialog.explain_sentence(arabic_sentence, arabic_question)
 
-from fastapi import Form
-from fastapi.responses import StreamingResponse
-from gtts import gTTS
-from io import BytesIO
-from server.services.TTS.text_to_speak import TextToSpeechConverter
-
-ttsConv = TextToSpeechConverter()
-
-# pip install playsound
-
-#pip install gTTS
-@app.post("/tts")
+@app.post("/tts", response_model=ResponseWrapper)
 async def tts(text: str = Form(...)):
     ttsConv.exelarate(text)
 
@@ -114,19 +144,12 @@ async def tts(text: str = Form(...)):
     # return StreamingResponse(audio_bytes, media_type="audio/mpeg")
 
 
-
-@app.post("/stt")
+@app.post("/stt", response_model=ResponseWrapper)
 async def stt(text: str = Form(...)):
     return {"message": conversation_with_user(text)}
 
 
-
-# import sys
-# from pathlib import Path
-# sys.path.append(str(Path(__file__).parent))
-# from server.services.LLM.gemini import *
-
-# @app.post("/student")
+# @app.post("/student", response_model=ResponseWrapper)
 # async def studentUpdate(input: str):
 #     final_input = "The following input represents the state of the student: \n\n" + \
 #                     input + "\n\n Return a json object that contains the same state parameters "+\

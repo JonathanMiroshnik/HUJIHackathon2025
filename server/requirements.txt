@@ -1,2 +1,4 @@
 google-generativeai
-google-auth 
+google-auth
+gTTS
+playsound
