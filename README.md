@@ -2,9 +2,9 @@
 An Arabic learning website from Hebrew speakers
 
 # Team Members:
-Riki Masar
-Ayala Houri
-Yoel Weiss
+Riki Masar, 
+Ayala Houri, 
+Yoel Weiss, 
 Jonathan Miroshnik
 
 # Structure
