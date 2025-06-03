@@ -64,7 +64,7 @@ function MainPage() {
         });      
 
         const result = await response.json();
-        context.addConversation(arrayToLanguageSpeechArray(result.message));
+        context.addConversation(arrayToLanguageSpeechArray(result.data));
       } catch (err) {
         console.error("Error:", err);
       }

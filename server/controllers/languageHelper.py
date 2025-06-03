@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.parent))
-from server.services.LLM.gemini import init_model
+from services.LLM.gemini import init_model
 
 import arabic_reshaper
 from bidi.algorithm import get_display

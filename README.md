@@ -1,5 +1,5 @@
 # HUJI Hackathon 2025
-An Arabic learning website from Hebrew speakers
+An Arabic learning website for Hebrew speakers
 
 # Team Members:
 Riki Masar, 

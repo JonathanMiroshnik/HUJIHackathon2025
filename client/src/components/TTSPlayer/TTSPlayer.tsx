@@ -5,26 +5,26 @@ const TTSPlayer: React.FC = () => {
   const [text, setText] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    // e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("text", text);
+    // const formData = new FormData();
+    // formData.append("text", text);
 
-    const response = await fetch(BACKEND_URL + "tts", {
-      method: "POST",
-      body: formData,
-    });
+    // const response = await fetch(BACKEND_URL + "tts", {
+    //   method: "POST",
+    //   body: formData,
+    // });
 
-    if (!response.ok) {
-      alert("Failed to fetch audio");
-      return;
-    }
+    // if (!response.ok) {
+    //   alert("Failed to fetch audio");
+    //   return;
+    // }
 
-    const audioBlob = await response.blob();
-    const audioUrl = URL.createObjectURL(audioBlob);
+    // const audioBlob = await response.blob();
+    // const audioUrl = URL.createObjectURL(audioBlob);
 
-    const audio = new Audio(audioUrl);
-    audio.play();
+    // const audio = new Audio(audioUrl);
+    // audio.play();
   };
 
   return (

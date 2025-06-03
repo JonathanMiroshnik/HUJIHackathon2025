@@ -6,3 +6,4 @@ pyttsx3
 arabic_reshaper
 python-bidi
 edge_tts
+SpeechRecognition

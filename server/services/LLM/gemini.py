@@ -2,6 +2,11 @@ import os
 import google.generativeai as genai
 import google.auth
 
+from pathlib import Path
+from dotenv import load_dotenv
+env_path = Path('.')/'.env'
+load_dotenv(env_path)
+
 class Gemini:
     """
     Simple Gemini API client - use as a black box
@@ -49,6 +54,7 @@ class Gemini:
 
             print(f"🚀 Initializing model: {model_name}...")
 
+            print("HERE", os.environ["GEMINI_API_KEY"])
             genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
             # Create model and chat session

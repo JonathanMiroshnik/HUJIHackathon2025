@@ -8,6 +8,11 @@ import os
 import google.generativeai as genai
 import google.auth
 
+from pathlib import Path
+from dotenv import load_dotenv
+env_path = Path('.')/'.env'
+load_dotenv(env_path)
+
 # Custom Gemini class with correct service account path
 class FixedGemini:
     """

@@ -89,7 +89,7 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
         }
 
         const reply = await response.json();
-        const replyText: string[] = reply.message;
+        const replyText: string[] = reply;
         highlightText([...replyText.map((word) => word.normalize("NFKC"))]);
     };
 
@@ -112,24 +112,24 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
     }
 
     const handleSubmit = async (inText: string) => {
-        const formData = new FormData();
-        formData.append("text", inText);
+        // const formData = new FormData();
+        // formData.append("text", inText);
     
-        const response = await fetch(BACKEND_URL + "tts", {
-          method: "POST",
-          body: formData,
-        });
+        // const response = await fetch(BACKEND_URL + "tts", {
+        //   method: "POST",
+        //   body: formData,
+        // });
     
-        if (!response.ok) {
-          alert("Failed to fetch audio");
-          return;
-        }
+        // if (!response.ok) {
+        //   alert("Failed to fetch audio");
+        //   return;
+        // }
     
-        const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioBlob);
+        // const audioBlob = await response.blob();
+        // const audioUrl = URL.createObjectURL(audioBlob);
     
-        const audio = new Audio(audioUrl);
-        audio.play();
+        // const audio = new Audio(audioUrl);
+        // audio.play();
     };    
 
     async function explanationClick(conversation: string[]) {
@@ -145,7 +145,7 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
             setWordExplanation(false);
             setLineExplanation(true);
 
-            setExplanation(result.message);
+            setExplanation(result);
             console.log(conversation);
         } catch (err) {
             console.error("Error:", err);
@@ -161,7 +161,7 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
             });
 
             const result = await response.json();
-            setConversation(prev => [...prev, result.message]);
+            setConversation(prev => [...prev, result]);
             console.log(conversation);
         } catch (err) {
             console.error("Error:", err);

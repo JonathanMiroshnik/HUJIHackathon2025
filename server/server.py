@@ -11,23 +11,23 @@
 import sys
 from pathlib import Path
 from io import BytesIO
-from typing import Optional
+from typing import Any, Optional
 from fastapi import HTTPException, FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from gtts import gTTS
 
-from server.services.TTS.text_to_speak import TextToSpeechConverter
-from server.Yoel.parser import extract_tagged_text
-from server.services.TTS.audio import conversation_with_user
+from services.TTS.text_to_speak import TextToSpeechConverter
+from Yoel.parser import extract_tagged_text
+from services.TTS.audio import conversation_with_user
 
 # Get absolute path to project root
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from server.Yoel.model import BilingualContentGenerator
-from server.controllers.languageHelper import Dialog
+from Yoel.model import BilingualContentGenerator
+from controllers.languageHelper import Dialog
 
 # import sys
 # from pathlib import Path
@@ -69,7 +69,7 @@ class WordExplanation(BaseModel):
 
 class ResponseWrapper(BaseModel):
     success: bool
-    data = None
+    data: Optional[Any] = None
     error: Optional[ErrorResponse] = None
 
 # # Use explain_sentence
@@ -89,11 +89,15 @@ async def api(data: RequestData):
     
     connected_history: str = '\n'.join(teacher.history)
     output = teacher.generate_bilingual_content(connected_history + "\n\n Current input:\n" + data.input)
-    return {"message": extract_tagged_text(output)}
+
+    return {
+        "success":"true",
+        "data":extract_tagged_text(output)
+    }
 
 
 @app.post("/explain-word", response_model=ResponseWrapper)
-async def explain_word(data: RequestData):
+async def explain_word_route(data: RequestData):
     print("Received data:", data.input)
 
     if len(data.input.split()) != 1:
@@ -120,7 +124,11 @@ async def arabic_speech_continue_conversation(data: StringRequest):
     print("Received data:", data.input)
 
     final_description = dialog.continue_conversation(data.input);
-    return {"message": final_description}
+
+    return {
+        "success": True,
+        "data": final_description
+    }
 
 
 @app.post("/arabic-speech-explanation", response_model=ResponseWrapper)
@@ -128,7 +136,11 @@ async def arabic_speech_explanation(data: StringRequest):
     print("Received data:", data.input)
     
     final_description = dialog.explain_conversation(data.input);
-    return {"message": final_description}
+
+    return {
+        "success": True,
+        "data": final_description
+    }
 
 
 @app.post("/tts", response_model=ResponseWrapper)
