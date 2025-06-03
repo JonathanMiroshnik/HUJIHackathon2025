@@ -29,15 +29,6 @@ class FixedGemini:
         self.chat = None
         self.model_name = None
         self._initialized = False
-        
-        # Correct path to the service account file
-        self._SERVICE_ACCOUNT_FILE_PATH = os.path.join(
-            os.path.dirname(__file__), 
-            '..', 
-            'services', 
-            'LLM', 
-            'hackathon-team-22_gen-lang-client-0325865525_iam_gserviceaccount_com_1747758084.json'
-        )
 
     def init_model(self, model_name=None):
         """
@@ -62,18 +53,7 @@ class FixedGemini:
 
             print(f"🚀 Initializing model: {model_name}...")
 
-            # Configure Google AI API with correct service account path
-            service_account_path = os.path.abspath(self._SERVICE_ACCOUNT_FILE_PATH)
-            
-            if not os.path.exists(service_account_path):
-                raise FileNotFoundError(f"Service account file not found at: {service_account_path}")
-
-            try:
-                credentials, _ = google.auth.load_credentials_from_file(service_account_path)
-            except Exception as e:
-                raise Exception(f"Failed to load credentials from {service_account_path}: {e}")
-
-            genai.configure(credentials=credentials)
+            genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
             # Create model and chat session
             self.model = genai.GenerativeModel(model_name)
@@ -357,6 +337,6 @@ def test_bilingual_generation():
         print(f"❌ Test failed with error: {e}")
 
 
-if __name__ == "__main__":
-    # Run test if script is executed directly
-    test_bilingual_generation()
+# if __name__ == "__main__":
+#     # Run test if script is executed directly
+#     test_bilingual_generation()

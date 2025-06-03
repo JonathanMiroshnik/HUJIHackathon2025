@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BACKEND_URL } from "../../config/constants";
 
 const TTSPlayer: React.FC = () => {
   const [text, setText] = useState("");
@@ -9,7 +10,7 @@ const TTSPlayer: React.FC = () => {
     const formData = new FormData();
     formData.append("text", text);
 
-    const response = await fetch("http://localhost:8000/tts", {
+    const response = await fetch(BACKEND_URL + "tts", {
       method: "POST",
       body: formData,
     });

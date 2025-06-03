@@ -36,5 +36,5 @@ def main():
         print("💡 Make sure you have the required dependencies and service account file")
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

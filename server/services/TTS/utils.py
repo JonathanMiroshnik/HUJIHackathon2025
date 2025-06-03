@@ -97,13 +97,11 @@ def print_title(title: str) -> None:
     print(border)
 
 
-# Example usage
-if __name__ == "__main__":
-    # Example of printing a title
-    print_title("Example Title")
+# # Example usage
+# if __name__ == "__main__":
+#     # Example of printing a title
+#     print_title("Example Title")
     
-    # Example of transcription (commented out as it requires an audio file)
-    # text = transcribe_audio_to_text("example.mp3", "fast")
-    # print(f"Transcription result: {text[:50]}...")
-
-
+#     # Example of transcription (commented out as it requires an audio file)
+#     # text = transcribe_audio_to_text("example.mp3", "fast")
+#     # print(f"Transcription result: {text[:50]}...")

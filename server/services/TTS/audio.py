@@ -104,5 +104,5 @@ def main():
     coorrect = conversation_with_user("مرحبًا، اسمي محمد")
     print(coorrect)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

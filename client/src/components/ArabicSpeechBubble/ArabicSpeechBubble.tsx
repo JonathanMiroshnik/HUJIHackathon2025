@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BACKEND_URL } from '../../config/constants';
 import ArabicSpeechExplanation from '../ArabicSpeechExplanation/ArabicSpeechExplanation';
 import './ArabicSpeechBubble.css'
 
@@ -23,6 +24,10 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
 
     const [conversation, setConversation] = useState<string[]>([]);
     const [humanResponse, setHumanResponse] = useState("");
+
+    useEffect(() => {
+        setConversation([text]);
+    }, []);
 
     function wordExplanationToString(wordExplanation: WordExplanationProps) {
         const ROW_SIZE = 2; // Must be above 0
@@ -73,7 +78,7 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
         const formData = new FormData();
         formData.append("text", inText);
     
-        const response = await fetch("http://localhost:8000/stt", {
+        const response = await fetch(BACKEND_URL + "stt", {
           method: "POST",
           body: formData,
         });        
@@ -84,7 +89,6 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
         }
 
         const reply = await response.json();
-        console.log("REPLY", reply.message);
         const replyText: string[] = reply.message;
         highlightText([...replyText.map((word) => word.normalize("NFKC"))]);
     };
@@ -96,8 +100,6 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
                                         .replace(/،/g, '');
         const hlh = cleaned.split(' ');
 
-        console.log("HLH", hlh);
-
         const highlightedHTML = hlh.map(word => {
                                     console.log("WORD", word, message.includes(word));
                                     return message.includes(word.normalize("NFKC"))
@@ -105,8 +107,6 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
                                         : `<b>${word}</b>`;
                                 })
         .join(' ');
-
-        console.log("highlighted", highlightedHTML);
         
         setConversation(prev => [highlightedHTML, ...prev.slice(1)])
     }
@@ -114,10 +114,8 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
     const handleSubmit = async (inText: string) => {
         const formData = new FormData();
         formData.append("text", inText);
-
-        console.log("TEXT",inText);
     
-        const response = await fetch("http://localhost:8000/tts", {
+        const response = await fetch(BACKEND_URL + "tts", {
           method: "POST",
           body: formData,
         });
@@ -136,7 +134,7 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
 
     async function explanationClick(conversation: string[]) {
         try {
-            const response = await fetch(`http://localhost:8000/arabic-speech-explanation`, {
+            const response = await fetch(BACKEND_URL + `arabic-speech-explanation`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ input: conversation }),
@@ -152,15 +150,11 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
         } catch (err) {
             console.error("Error:", err);
         }
-    }
-
-    useEffect(() => {
-        setConversation([text]);
-    }, []);
+    }    
 
     async function continueConversationClick(conversation: string[]) {
         try {
-            const response = await fetch(`http://localhost:8000/arabic-speech-continue-conversation`, {
+            const response = await fetch(BACKEND_URL + `arabic-speech-continue-conversation`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ input: conversation }),
@@ -174,40 +168,9 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
         }
     }
 
-    async function handleSpeechClick(word: string, type: string) {
-        try {
-            const response = await fetch(`http://localhost:8000/${type}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ input: word }),
-            });
-
-            const result = await response.json();
-
-            const resultRemade: WordExplanationProps = {
-                stem: result.binyan,
-                singular: result.singular, 
-                plural: result.plural,
-                root: result.root,
-                // partOfSpeech: string;
-            };
-
-            handleSubmit(word);
-
-            setWordExplanation(true);
-            setLineExplanation(false);
-
-            setExplanation(wordExplanationToString(resultRemade));
-            // setExplanation(JSON.stringify(result, null, 2)); // TODO: break up word parameters
-            console.log(conversation);
-        } catch (err) {
-            console.error("Error:", err);
-        }
-    }
-
     async function handleWord(word: string) {
         try {
-            const response = await fetch(`http://localhost:8000/explain-word`, {
+            const response = await fetch(BACKEND_URL + `explain-word`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ input: word }),
@@ -240,6 +203,37 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
         setHumanResponse(e.target.value);
     };
 
+    // async function handleSpeechClick(word: string, type: string) {
+    //     try {
+    //         const response = await fetch(BACKEND_URL + `${type}`, {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ input: word }),
+    //         });
+
+    //         const result = await response.json();
+
+    //         const resultRemade: WordExplanationProps = {
+    //             stem: result.binyan,
+    //             singular: result.singular, 
+    //             plural: result.plural,
+    //             root: result.root,
+    //             // partOfSpeech: string;
+    //         };
+
+    //         handleSubmit(word);
+
+    //         setWordExplanation(true);
+    //         setLineExplanation(false);
+
+    //         setExplanation(wordExplanationToString(resultRemade));
+    //         // setExplanation(JSON.stringify(result, null, 2)); // TODO: break up word parameters
+    //         console.log(conversation);
+    //     } catch (err) {
+    //         console.error("Error:", err);
+    //     }
+    // }    
+
     return (
         <div className="arabic-speech-bubble">
             { conversation.map((conv, ind) => 
@@ -254,8 +248,8 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
                         </span> 
                     ))  }
                 </div>
-             ) }
-             { explanation && <ArabicSpeechExplanation> <div dangerouslySetInnerHTML={{ __html: explanation }}/> </ArabicSpeechExplanation>}
+            ) }
+            { explanation && <ArabicSpeechExplanation> <div dangerouslySetInnerHTML={{ __html: explanation }}/> </ArabicSpeechExplanation>}
             <div className="arabic-speech-button-section">   
                 <button onClick={() => sttSubmit(conversation[0])} className="arabic-speech-button">🗣️</button>
                 <button onClick={() => handleSubmit(conversation.join('\n'))} className="arabic-speech-button">📢</button>

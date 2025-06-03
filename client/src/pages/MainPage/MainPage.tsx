@@ -1,12 +1,13 @@
 import { useState, useEffect, useContext } from 'react'
+import { BACKEND_URL } from '../../config/constants';
 import SpeechBubble from '../../components/SpeechBubble/SpeechBubble';
 import ArabicSpeechBubble from '../../components/ArabicSpeechBubble/ArabicSpeechBubble';
 import type { LanguageSpeech } from '../../components/SpeechBubble/SpeechBubble';
 import Navigation from '../../components/Navigation/Navigation';
-import './MainPage.css'
 import TTSPlayer from '../../components/TTSPlayer/TTSPlayer';
 import { useAppContext } from '../../contexts/AppContext';
 import type { StudentState } from '../../contexts/AppContext';
+import './MainPage.css'
 
 function MainPage() {  
   const context = useAppContext(); 
@@ -56,13 +57,11 @@ function MainPage() {
 
 
      try {
-        const response = await fetch("http://localhost:8000/api", {
+        const response = await fetch(BACKEND_URL + "api", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ input: message }),
-        });
-        
-        // combined + 
+        });      
 
         const result = await response.json();
         context.addConversation(arrayToLanguageSpeechArray(result.message));
