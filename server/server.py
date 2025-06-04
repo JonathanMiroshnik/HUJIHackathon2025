@@ -114,7 +114,7 @@ async def explain_word_route(data: RequestData):
         "success": True,
         "data": {
             "word": data.input,
-            "meaning": explanation
+            "parts": explanation
         }
     }
 
@@ -136,6 +136,17 @@ async def arabic_speech_explanation(data: StringRequest):
     print("Received data:", data.input)
     
     final_description = dialog.explain_conversation(data.input);
+
+    return {
+        "success": True,
+        "data": final_description
+    }
+
+@app.post("/translate", response_model=ResponseWrapper)
+async def translate_from_arabic(data: StringRequest):
+    print("Received data:", data.input)
+    
+    final_description = dialog.translate_conversation(data.input);
 
     return {
         "success": True,

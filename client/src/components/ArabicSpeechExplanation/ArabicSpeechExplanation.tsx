@@ -3,13 +3,17 @@ import "./ArabicSpeechExplanation.css"
 
 interface ArabicSpeechExplanationProps {
   children: ReactNode;
+  processing?: boolean;
   // You can add more props here if needed
 }
 
-function ArabicSpeechExplanation({children}: ArabicSpeechExplanationProps) {
+function ArabicSpeechExplanation({children, processing=false}: ArabicSpeechExplanationProps) {
     return (
-        <div className="arabic-speech-explanation">
-            {children}
+        <div>
+            <div className="arabic-speech-explanation">
+                {children}
+            </div>
+            { processing && "⏳" }
         </div>
     );
 }

@@ -13,65 +13,55 @@ export interface WordExplanationProps {
     singular?: string;
     plural?: string;
     root?: string;
+    meaning?: string;
     partOfSpeech?: string;
 }
+
+const WordExplanationPropsDict = {
+    "stem": "בניין",
+    "singular": "צורת יחיד",
+    "plural": "צורת רבים",
+    "root": "שורש",
+    "meaning": "משמעות",
+    "partOfSpeech": "חלק דיבר"
+};
+
 
 function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
     const [explanation, setExplanation] = useState("");
 
-    const [wordExplanation, setWordExplanation] = useState(false);
-    const [lineExplanation, setLineExplanation] = useState(false);
-
     const [conversation, setConversation] = useState<string[]>([]);
     const [humanResponse, setHumanResponse] = useState("");
+
+    const [highlighted, setHighlighted] = useState<[number, number] | null>(null);
+    const [processing, setProcessing] = useState<boolean>(false);
 
     useEffect(() => {
         setConversation([text]);
     }, []);
 
-    function wordExplanationToString(wordExplanation: WordExplanationProps) {
+    function iterateOverWordExplanationProps(props: WordExplanationProps): string {
         const ROW_SIZE = 2; // Must be above 0
-
         var retStr: string = "";
         var curCount: number = 0;
-        
-        if (wordExplanation.partOfSpeech) {
-            retStr += " <b>חלק דיבר</b>: " + wordExplanation.partOfSpeech + "\t    ";
-            if (curCount % ROW_SIZE == 0) {
-                retStr += '\n';
+
+        for (const key in props) {
+            if (props.hasOwnProperty(key)) {
+                const typedKey = key as keyof WordExplanationProps;
+                const value = props[typedKey];
+                if (value === undefined || value === null) {
+                    continue;
+                }
+
+                retStr += "| <b>" + WordExplanationPropsDict[typedKey] + "</b>: " + value + "\t     ";
+                if (curCount % ROW_SIZE == 0) {
+                    retStr += '\n';
+                }
+                curCount += 1;
             }
-            curCount += 1;
-        }
-        if (wordExplanation.root) {
-            retStr += " <b>שורש</b>: " + wordExplanation.root + "\t    ";
-            if (curCount % ROW_SIZE == 0) {
-                retStr += '\n';
-            }
-            curCount += 1;
-        }
-        if (wordExplanation.plural) {
-            retStr += " <b>רבים</b>: " + wordExplanation.plural + "\t    ";
-            if (curCount % ROW_SIZE == 0) {
-                retStr += '\n';
-            }
-            curCount += 1;
-        }
-        if (wordExplanation.singular) {
-            retStr += " <b>יחיד</b>: " + wordExplanation.singular + "\t    ";
-            if (curCount % ROW_SIZE == 0) {
-                retStr += '\n';
-            }
-            curCount += 1;
-        }
-        if (wordExplanation.stem) {
-            retStr += " <b>בניין</b>: " + wordExplanation.stem + "\t    ";
-            if (curCount % ROW_SIZE == 0) {
-                retStr += '\n';
-            }
-            curCount += 1;
         }
 
-        return retStr;
+        return retStr; // Make sure to return a string (or adjust the return type)
     }
 
     const sttSubmit = async (inText: string) => {
@@ -108,6 +98,7 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
                                 })
         .join(' ');
         
+        console.log("convo", conversation);
         setConversation(prev => [highlightedHTML, ...prev.slice(1)])
     }
 
@@ -133,6 +124,8 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
     };    
 
     async function explanationClick(conversation: string[]) {
+        setHighlighted(null);
+
         try {
             const response = await fetch(BACKEND_URL + `arabic-speech-explanation`, {
                 method: "POST",
@@ -141,16 +134,32 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
             });
 
             const result = await response.json();
-
-            setWordExplanation(false);
-            setLineExplanation(true);
-
-            setExplanation(result);
+            console.log(result);
+            setExplanation(result.data);
             console.log(conversation);
         } catch (err) {
             console.error("Error:", err);
         }
-    }    
+    }
+
+    async function translateConversation(conversation: string[]) {
+        setHighlighted(null);
+
+        try {
+            const response = await fetch(BACKEND_URL + `translate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ input: conversation }),
+            });
+
+            const result = await response.json();
+            console.log(result);
+            setExplanation(result.data);
+            console.log(conversation);
+        } catch (err) {
+            console.error("Error:", err);
+        }
+    }
 
     async function continueConversationClick(conversation: string[]) {
         try {
@@ -168,7 +177,10 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
         }
     }
 
-    async function handleWord(word: string) {
+    async function handleWord(word: string, wordIndexes: [number, number]) {
+        setHighlighted(wordIndexes);
+        setProcessing(true);
+        
         try {
             const response = await fetch(BACKEND_URL + `explain-word`, {
                 method: "POST",
@@ -177,24 +189,26 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
             });
 
             const result = await response.json();
+            if (!result || !result.data || !result.data.parts) {
+                throw new Error("Word explanation did not properly return");
+            }
 
+            const parts = result.data.parts;
             const resultRemade: WordExplanationProps = {
-                stem: result.binyan,
-                singular: result.singular, 
-                plural: result.plural,
-                root: result.root,
-                // partOfSpeech: string;
+                stem: parts.binyan,
+                singular: parts.singular, 
+                plural: parts.plural,
+                root: parts.root,
+                meaning: parts.meaning,
+                partOfSpeech: parts.partOfSpeech
             };
 
-            handleSubmit(word);
+            handleSubmit(word);            
+            setExplanation(iterateOverWordExplanationProps(resultRemade));
 
-            setWordExplanation(true);
-            setLineExplanation(false);
-
-            setExplanation(wordExplanationToString(resultRemade));
-            // setExplanation(JSON.stringify(result, null, 2)); // TODO: break up word parameters
-            console.log(conversation);
+            setProcessing(false);
         } catch (err) {
+            setProcessing(false);
             console.error("Error:", err);
         }
     }
@@ -241,19 +255,20 @@ function ArabicSpeechBubble({text="", speechIndex=0}: ArabicSpeechBubbleProps) {
                     {conv.split(' ').map((word, index) => (
                         <span
                             key={"arabic_bubble_" + speechIndex + "_subBubble_" + ind + "_word_" + index}
-                            // className={`word ${activeWord === word ? 'active' : ''}`} // TODO: active word indicator
-                            onClick={() => handleWord(word)}
+                            className={`word ${highlighted && highlighted[0] === ind && highlighted[1] === index ? 'active-word' : ''}`}
+                            onClick={() => handleWord(word, [ind, index])}
                         >
                             <a style={{color: "white"}} dangerouslySetInnerHTML={{ __html: word + ' '}} />
                         </span> 
                     ))  }
                 </div>
             ) }
-            { explanation && <ArabicSpeechExplanation> <div dangerouslySetInnerHTML={{ __html: explanation }}/> </ArabicSpeechExplanation>}
+            { explanation && <ArabicSpeechExplanation processing={processing}> <div dangerouslySetInnerHTML={{ __html: explanation }}/> </ArabicSpeechExplanation>}
             <div className="arabic-speech-button-section">   
                 <button onClick={() => sttSubmit(conversation[0])} className="arabic-speech-button">🗣️</button>
                 <button onClick={() => handleSubmit(conversation.join('\n'))} className="arabic-speech-button">📢</button>
                 <button onClick={() => explanationClick(conversation)} className="arabic-speech-button">הסבר</button>
+                <button onClick={() => translateConversation(conversation)} className="arabic-speech-button">תרגום</button>
                 <button onClick={() => continueConversationClick(conversation)} className="arabic-speech-button">המשך</button>                
                 <input onChange={handleChange} className="arabic-speech-question-input" placeholder={`שאל על ${conversation.length > 1 ? "השיחה": "המשפט"}`} />
                 <button onClick={() => explanationClick([...conversation, humanResponse])}> שלח </button>

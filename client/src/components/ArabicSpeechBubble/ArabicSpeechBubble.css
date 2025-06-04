@@ -40,6 +40,11 @@
     color: #1a73e8;
 }
 
+.active-word {
+    /* color: red; */
+    text-decoration: underline red;
+}
+
 .arabic-speech-bubble:hover > .arabic-speech-button-section {
     opacity: 1;
     transform: scaleY(1);

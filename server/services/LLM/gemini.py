@@ -53,8 +53,6 @@ class Gemini:
                 raise ValueError(f"Invalid model. Available: {list(self.AVAILABLE_MODELS.keys())}")
 
             print(f"🚀 Initializing model: {model_name}...")
-
-            print("HERE", os.environ["GEMINI_API_KEY"])
             genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
             # Create model and chat session
@@ -62,8 +60,6 @@ class Gemini:
             self.chat = self.model.start_chat()
             self.model_name = model_name
 
-
-            # Rikis section ---------------------------------------
             # 2. Define generation settings with explicit JSON MIME type
             generation_config = {
                 "temperature": 0.9,
@@ -72,13 +68,13 @@ class Gemini:
                 "max_output_tokens": 2048,
                 "response_mime_type": "application/json"  # Tell Gemini to return JSON
             }
+            
             # 3. Load the Gemini model
             self.json_model = genai.GenerativeModel(
                 model_name=self.model_name,
                 generation_config=generation_config
             )
             self.json_chat = self.json_model.start_chat()
-            # Rikis section ---------------------------------------
             
             self._initialized = True
 
